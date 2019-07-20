@@ -1,9 +1,7 @@
 {
   "presets": [
     "@babel/react",
-    "@babel/env",
-    "react",
-    "es2015"
+    "@babel/env"
     /*
     Babel uses these "presets" to know how to transpile your Javascript code. Here's what we're saying with these:
       'react': teaches Babel to recognize JSX - a must have for React!
