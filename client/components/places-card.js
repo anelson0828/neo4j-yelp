@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import {flexbox, spacing, borders, shadows} from '@material-ui/system'
 import {Container, Box} from '@material-ui/core'
 import {connect} from 'react-redux'
-import {addPlaceThunk} from '../store/date'
+import {addPlaceThunk} from '../store/selectedDate'
 
 const useStyles = makeStyles({
   card: {

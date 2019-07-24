@@ -27,13 +27,13 @@ export const addPlaceThunk = place => {
   }
 }
 
-export default (date = {places: []}, action) => {
+export default (selectedDate = {name: '', places: []}, action) => {
   switch (action.type) {
     case SET_DATE:
       return action.date
     case ADD_PLACE:
-      return {...date, places: [...date.places, action.place]}
+      return {...selectedDate, places: [...selectedDate.places, action.place]}
     default:
-      return date
+      return selectedDate
   }
 }

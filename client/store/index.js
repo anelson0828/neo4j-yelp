@@ -4,9 +4,10 @@ import thunkMiddleware from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import user from './user'
 import places from './places'
-import date from './date'
+import selectedDate from './selectedDate'
+import dates from './dates'
 
-const reducer = combineReducers({user, places, date})
+const reducer = combineReducers({user, places, selectedDate, dates})
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )
