@@ -1,5 +1,6 @@
 // const User = require('./user')
 const Place = require('./neo4j/place')
+const Date = require('./neo4j/date')
 
 /**
  * If we had any associations to make, this would be a great place to put them!
@@ -15,5 +16,6 @@ const Place = require('./neo4j/place')
  * instead of: const User = require('../db/models/user')
  */
 module.exports = {
-  Place
+  Place,
+  Date
 }

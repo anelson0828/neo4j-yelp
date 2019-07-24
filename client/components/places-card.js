@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography'
 import {flexbox, spacing, borders, shadows} from '@material-ui/system'
 import {Container, Box} from '@material-ui/core'
 import {connect} from 'react-redux'
-import {createPlaceThunk} from '../store/places'
+import {addPlaceThunk} from '../store/date'
 
 const useStyles = makeStyles({
   card: {
@@ -66,7 +66,6 @@ const DisconnectedPlacesCard = props => {
                 size="small"
                 color="primary"
                 onClick={() => {
-                  console.log(place.name)
                   props.create({name: place.name})
                 }}
               >
@@ -83,7 +82,7 @@ const DisconnectedPlacesCard = props => {
 const mapDispatch = dispatch => {
   return {
     create: place => {
-      dispatch(createPlaceThunk(place))
+      dispatch(addPlaceThunk(place))
     }
   }
 }
