@@ -5,7 +5,9 @@ var driver = neo4j.driver(
   'bolt://localhost',
   neo4j.auth.basic('neo4j', process.env.NEO4J_SECRET)
 )
+const session = driver.session()
 
 module.exports = {
-  db: driver
+  driver,
+  session
 }

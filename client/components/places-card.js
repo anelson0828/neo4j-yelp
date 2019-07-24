@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import {flexbox, spacing, borders, shadows} from '@material-ui/system'
 import {Container, Box} from '@material-ui/core'
+import {connect} from 'react-redux'
+import {createPlaceThunk} from '../store/places'
 
 const useStyles = makeStyles({
   card: {
@@ -21,7 +23,7 @@ const useStyles = makeStyles({
   }
 })
 
-const PlacesCard = props => {
+const DisconnectedPlacesCard = props => {
   const classes = useStyles()
   return (
     <Container>
@@ -60,7 +62,14 @@ const PlacesCard = props => {
               <Button size="small" color="primary">
                 Favorite
               </Button>
-              <Button size="small" color="primary">
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => {
+                  console.log(place.name)
+                  props.create({name: place.name})
+                }}
+              >
                 Add to Date
               </Button>
             </CardActions>
@@ -71,61 +80,12 @@ const PlacesCard = props => {
   )
 }
 
-// const useStyles = makeStyles(theme => ({
-//   root: {
-//     display: 'flex',
-//     flexWrap: 'wrap',
-//     justifyContent: 'space-around',
-//     overflow: 'hidden',
-//     backgroundColor: theme.palette.background.paper
-//   },
-//   gridList: {
-//     width: 1000,
-//     height: 450
-//   },
-//   icon: {
-//     color: 'rgba(255, 255, 255, 0.54)'
-//   },
-//   card: {
-//     maxWidth: 345
-//   },
-//   media: {
-//     height: 140
-//   }
-// }))
+const mapDispatch = dispatch => {
+  return {
+    create: place => {
+      dispatch(createPlaceThunk(place))
+    }
+  }
+}
 
-// const PlacesCard = props => {
-//   const places = props.places
-//   const classes = useStyles()
-
-//   return (
-//     <GridList cellHeight={180} className={classes.gridList}>
-//       <GridListTile key="Subheader" cols={10} style={{height: 'auto'}} />
-//       {places.map(tile => (
-//         <GridListTile key={tile.id}>
-//           <img src={tile.image_url} alt={tile.title} />
-//           <GridListTileBar
-//             title={tile.title}
-//             subtitle={
-//               <span>
-//                 {tile.title}
-//                 {tile.rating}
-//                 {tile.price}
-//               </span>
-//             }
-//             actionIcon={
-//               <IconButton
-//                 aria-label={`info about ${tile.title}`}
-//                 className={classes.icon}
-//               >
-//                 <InfoIcon />
-//               </IconButton>
-//             }
-//           />
-//         </GridListTile>
-//       ))}
-//     </GridList>
-//   )
-// }
-
-export default PlacesCard
+export default connect(null, mapDispatch)(DisconnectedPlacesCard)

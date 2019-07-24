@@ -1,9 +1,9 @@
+/* eslint-disable no-multi-str */
 var _ = require('lodash')
-var dbUtils = require('../neo4j/dbUtils')
-var Place = require('../models/neo4j/place')
-var User = require('../models/neo4j/user')
+var Place = require('./models/neo4j/place')
+const {session} = require('./neo4j')
 
-function searchPlaces(session, queryString) {
+function searchPlaces(queryString) {
   return session
     .run(
       'MATCH (place:Place) \
@@ -23,22 +23,17 @@ function searchPlaces(session, queryString) {
     })
 }
 
-function createPlace(session, name) {
+function createPlace(params) {
   return session
     .run(
-      'MATCH (place:Place {name:{name}}) \
-      OPTIONAL MATCH (place)<-[r]-(person:Person) \
-      RETURN place.name AS name, \
-      LIMIT 1',
-      {name}
+      `MERGE (p:Place {name: "${params.name}"}) \
+RETURN p.name`
     )
     .then(result => {
       session.close()
-
       if (_.isEmpty(result.records)) return null
-
       var record = result.records[0]
-      return new Place(record.get('name'))
+      return new Place(record.get('p.name'))
     })
     .catch(error => {
       session.close()
@@ -46,7 +41,7 @@ function createPlace(session, name) {
     })
 }
 
-function getPlace(session, title) {
+function getPlace(title) {
   return session
     .run(
       "MATCH (place:Place {title:{title}}) \
