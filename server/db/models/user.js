@@ -1,75 +1,81 @@
-const crypto = require('crypto')
-const Sequelize = require('sequelize')
-const db = require('../db')
-const _ = require('lodash')
+'use strict'
 
-const User = db.define('user', {
-  email: {
-    type: Sequelize.STRING,
-    unique: true,
-    allowNull: false
-  },
-  password: {
-    type: Sequelize.STRING,
-    // Making `.password` act like a func hides it when serializing to JSON.
-    // This is a hack to get around Sequelize's lack of a "private" option.
-    get() {
-      return () => this.getDataValue('password')
-    }
-  },
-  salt: {
-    type: Sequelize.STRING,
-    // Making `.salt` act like a function hides it when serializing to JSON.
-    // This is a hack to get around Sequelize's lack of a "private" option.
-    get() {
-      return () => this.getDataValue('salt')
-    }
-  },
-  googleId: {
-    type: Sequelize.STRING
-  }
-})
+var uuid = require('node-uuid')
+var randomstring = require('randomstring')
+var _ = require('lodash')
+var User = require('../models/neo4j/user')
+var crypto = require('crypto')
 
-module.exports = User
-
-/**
- * instanceMethods
- */
-User.prototype.correctPassword = function(candidatePwd) {
-  return User.encryptPassword(candidatePwd, this.salt()) === this.password()
+var register = function(session, username, password) {
+  return session
+    .run('MATCH (user:User {username: {username}}) RETURN user', {
+      username: username
+    })
+    .then(results => {
+      if (!_.isEmpty(results.records)) {
+        throw {username: 'username already in use', status: 400}
+      } else {
+        return session
+          .run(
+            'CREATE (user:User {id: {id}, username: {username}, password: {password}, api_key: {api_key}}) RETURN user',
+            {
+              id: uuid.v4(),
+              username: username,
+              password: hashPassword(username, password),
+              api_key: randomstring.generate({
+                length: 20,
+                charset: 'hex'
+              })
+            }
+          )
+          .then(results => {
+            return new User(results.records[0].get('user'))
+          })
+      }
+    })
 }
 
-User.prototype.sanitize = function() {
-  return _.omit(this.toJSON(), ['password', 'salt'])
+var me = function(session, apiKey) {
+  return session
+    .run('MATCH (user:User {api_key: {api_key}}) RETURN user', {
+      api_key: apiKey
+    })
+    .then(results => {
+      if (_.isEmpty(results.records)) {
+        throw {message: 'invalid authorization key', status: 401}
+      }
+      return new User(results.records[0].get('user'))
+    })
 }
 
-/**
- * classMethods
- */
-User.generateSalt = function() {
-  return crypto.randomBytes(16).toString('base64')
+var login = function(session, username, password) {
+  return session
+    .run('MATCH (user:User {username: {username}}) RETURN user', {
+      username: username
+    })
+    .then(results => {
+      if (_.isEmpty(results.records)) {
+        throw {username: 'username does not exist', status: 400}
+      } else {
+        var dbUser = _.get(results.records[0].get('user'), 'properties')
+        if (dbUser.password != hashPassword(username, password)) {
+          throw {password: 'wrong password', status: 400}
+        }
+        return {token: _.get(dbUser, 'api_key')}
+      }
+    })
 }
 
-User.encryptPassword = function(plainText, salt) {
+function hashPassword(username, password) {
+  var s = username + ':' + password
   return crypto
-    .createHash('RSA-SHA256')
-    .update(plainText)
-    .update(salt)
+    .createHash('sha256')
+    .update(s)
     .digest('hex')
 }
 
-/**
- * hooks
- */
-const setSaltAndPassword = user => {
-  if (user.changed('password')) {
-    user.salt = User.generateSalt()
-    user.password = User.encryptPassword(user.password(), user.salt())
-  }
+module.exports = {
+  register: register,
+  me: me,
+  login: login
 }
-
-User.beforeCreate(setSaltAndPassword)
-User.beforeUpdate(setSaltAndPassword)
-User.beforeBulkCreate(users => {
-  users.forEach(setSaltAndPassword)
-})

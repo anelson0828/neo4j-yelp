@@ -5,3 +5,6 @@
  */
 export {default as Navbar} from './navbar'
 export {Login, Signup} from './auth-form'
+export {default as Search} from './search'
+export {default as MenuAppBar} from './appbar'
+export {default as TemporaryDrawer} from './nav-drawer'

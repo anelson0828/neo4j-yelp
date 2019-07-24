@@ -1,4 +1,4 @@
-const db = require('./db')
+const db = require('./neo4j')
 
 // register models
 require('./models')
