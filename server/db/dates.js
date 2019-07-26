@@ -13,7 +13,8 @@ RETURN d.name`
       session.close()
       if (_.isEmpty(result.records)) return null
       var record = result.records[0]
-      return new Date(record.get('d.name'))
+      return record.get('d.name')
+      // return new Date(record.get('d.name'))
     })
     .catch(error => {
       session.close()

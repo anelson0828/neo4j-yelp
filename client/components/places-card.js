@@ -66,7 +66,10 @@ const DisconnectedPlacesCard = props => {
                 size="small"
                 color="primary"
                 onClick={() => {
-                  props.create({name: place.name})
+                  props.create({
+                    name: place.name,
+                    dateName: props.selectedDate.name
+                  })
                 }}
               >
                 Add to Date
@@ -79,6 +82,12 @@ const DisconnectedPlacesCard = props => {
   )
 }
 
+const mapState = state => {
+  return {
+    selectedDate: state.selectedDate
+  }
+}
+
 const mapDispatch = dispatch => {
   return {
     create: place => {
@@ -87,4 +96,4 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(null, mapDispatch)(DisconnectedPlacesCard)
+export default connect(mapState, mapDispatch)(DisconnectedPlacesCard)

@@ -27,13 +27,16 @@ function createPlace(params) {
   return session
     .run(
       `MERGE (p:Place {name: "${params.name}"}) \
-RETURN p.name`
+      MERGE (d: Date {name: "${params.dateName}"}) \
+      CREATE (d)-[:INCLUDES]->(p) \
+      RETURN p.name`
     )
     .then(result => {
       session.close()
       if (_.isEmpty(result.records)) return null
       var record = result.records[0]
-      return new Place(record.get('p.name'))
+      return record.get('p.name')
+      // return new Place(record.get('p.name'))
     })
     .catch(error => {
       session.close()

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {CREATE_DATE} from './dates'
 
 export const SET_DATE = 'SET_DATE'
 export const ADD_PLACE = 'ADD_PLACE'
@@ -31,6 +32,8 @@ export default (selectedDate = {name: '', places: []}, action) => {
   switch (action.type) {
     case SET_DATE:
       return action.date
+    case CREATE_DATE:
+      return {...selectedDate, name: action.date}
     case ADD_PLACE:
       return {...selectedDate, places: [...selectedDate.places, action.place]}
     default:
