@@ -1,11 +1,9 @@
 import React from 'react'
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-import {createDateThunk, fetchDatesThunk} from '../store/dates'
 import {Button, Input} from '@material-ui/core'
-import DateList from './date-list'
+import {connect} from 'react-redux'
+import {createUserThunk} from '../store/users'
 
-class DisconnectedDates extends React.Component {
+class DisconnectedAddUser extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -14,18 +12,17 @@ class DisconnectedDates extends React.Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
-  componentDidMount() {
-    this.props.getDates()
-  }
+
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
     })
   }
+
   handleSubmit() {
     try {
       event.preventDefault()
-      this.props.createDateThunk({name: this.state.name})
+      this.props.createUser({name: this.state.name})
     } catch (err) {
       console.error(err)
     }
@@ -34,7 +31,6 @@ class DisconnectedDates extends React.Component {
   render() {
     return (
       <div>
-        <h3>Dates</h3>
         <label htmlFor="name">Name</label>
         <Input
           name="name"
@@ -48,9 +44,8 @@ class DisconnectedDates extends React.Component {
           type="submit"
           onClick={this.handleSubmit}
         >
-          Create Date
+          Create User
         </Button>
-        <DateList dates={this.props.dates} />
       </div>
     )
   }
@@ -58,16 +53,16 @@ class DisconnectedDates extends React.Component {
 
 const mapState = state => {
   return {
-    places: state.places,
-    dates: state.dates
+    selectedUser: state.selectedUser
   }
 }
 
 const mapDispatch = dispatch => {
   return {
-    createDateThunk: name => dispatch(createDateThunk(name)),
-    getDates: () => dispatch(fetchDatesThunk())
+    createUser: user => {
+      dispatch(createUserThunk(user))
+    }
   }
 }
 
-export default withRouter(connect(mapState, mapDispatch)(DisconnectedDates))
+export default connect(mapState, mapDispatch)(DisconnectedAddUser)

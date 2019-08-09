@@ -8,8 +8,6 @@ const clientId = process.env.YELP_CLIENT_ID
 
 router.get(`/search`, async (req, res, next) => {
   try {
-    console.log('req', req.query)
-
     const searchParams = {
       term: req.query.term,
       location: req.query.location

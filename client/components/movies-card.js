@@ -23,31 +23,28 @@ const useStyles = makeStyles({
   }
 })
 
-const DisconnectedPlacesCard = props => {
+const DisconnectedMoviesCard = props => {
   const classes = useStyles()
   return (
     <Container>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap">
-        {props.places.map(place => (
-          <Card padding={2} margin={10} key={place.id} className={classes.card}>
+        {props.movies.map(movie => (
+          <Card padding={2} margin={10} key={movie.id} className={classes.card}>
             <CardActionArea>
-              <CardHeader
-                title={place.name}
-                subheader={place.categories[0].title}
-              />
+              <CardHeader title={movie.title} />
               <CardMedia
                 className={classes.media}
-                image={place.image_url}
-                alt={place.name}
-                title={place.name}
+                image={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={movie.title}
+                title={movie.title}
               />
               <CardContent>
                 <Typography variant="body2" color="textSecondary" component="p">
-                  Rating: {place.rating}
+                  Rating: {movie.vote_average}
                   <br />
-                  Price: {place.price}
+                  Overview: {movie.overview}
                   <br />
-                  Address: {place.location.display_address.join(', ')}
+                  Release Date: {movie.release_date}
                 </Typography>
               </CardContent>
             </CardActionArea>
@@ -60,11 +57,7 @@ const DisconnectedPlacesCard = props => {
                 color="primary"
                 onClick={() => {
                   props.create({
-                    name: place.name,
-                    address: place.location.display_address.join(', '),
-                    image: place.image_url,
-                    rating: place.rating,
-                    price: place.price,
+                    name: movie.title,
                     dateName: props.selectedDate.properties.name
                   })
                 }}
@@ -93,4 +86,4 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(mapState, mapDispatch)(DisconnectedPlacesCard)
+export default connect(mapState, mapDispatch)(DisconnectedMoviesCard)

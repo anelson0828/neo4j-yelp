@@ -5,7 +5,10 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
+import UserIcon from '@material-ui/icons/AccountCircle'
+import HomeIcon from '@material-ui/icons/Home'
+import SearchIcon from '@material-ui/icons/Search'
+import PeopleIcon from '@material-ui/icons/People'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import {Link} from 'react-router-dom'
@@ -46,43 +49,36 @@ export default function TemporaryDrawer(props) {
       onKeyDown={toggleDrawer(side, false)}
     >
       <List>
-        <Link
-          to="/home"
-          onClick={() => {
-            props.setName('Home')
-          }}
-        >
+        <Link to="/home">
           <ListItem button key="home">
             <ListItemIcon>
-              <InboxIcon />
+              <HomeIcon />
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
         </Link>
-        <Link
-          to="/search"
-          onClick={() => {
-            props.setName('Search')
-          }}
-        >
+        <Link to="/search">
           <ListItem button key="search">
             <ListItemIcon>
-              <InboxIcon />
+              <SearchIcon />
             </ListItemIcon>
             <ListItemText primary="Search" />
           </ListItem>
         </Link>
-        <Link
-          to="/dates"
-          onClick={() => {
-            props.setName('Dates')
-          }}
-        >
+        <Link to="/dates">
           <ListItem button key="dates">
             <ListItemIcon>
-              <InboxIcon />
+              <PeopleIcon />
             </ListItemIcon>
             <ListItemText primary="Dates" />
+          </ListItem>
+        </Link>
+        <Link to="/users">
+          <ListItem button key="users">
+            <ListItemIcon>
+              <UserIcon />
+            </ListItemIcon>
+            <ListItemText primary="Users" />
           </ListItem>
         </Link>
       </List>

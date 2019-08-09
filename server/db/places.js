@@ -27,8 +27,11 @@ function createPlace(params) {
   return session
     .run(
       `MERGE (p:Place {name: "${params.name}"}) \
+      ON MATCH SET p.address= ${params.address}, p.image= ${
+        params.image
+      }, p.rating= ${params.rating}, p.price= ${params.price})
       MERGE (d: Date {name: "${params.dateName}"}) \
-      CREATE (d)-[:INCLUDES]->(p) \
+      MERGE (d)-[:INCLUDES]->(p) \
       RETURN p.name`
     )
     .then(result => {

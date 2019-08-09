@@ -5,12 +5,10 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
 import AccountCircle from '@material-ui/icons/AccountCircle'
-import Switch from '@material-ui/core/Switch'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormGroup from '@material-ui/core/FormGroup'
 import MenuItem from '@material-ui/core/MenuItem'
 import Menu from '@material-ui/core/Menu'
 import TemporaryDrawer from './nav-drawer'
+import {connect} from 'react-redux'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,17 +22,12 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function MenuAppBar() {
+const DisconnectedMenuAppBar = props => {
   const classes = useStyles()
-  const [auth, setAuth] = React.useState(true)
+
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const [name, getName] = React.useState(null)
 
   const open = Boolean(anchorEl)
-
-  function handleChange(event) {
-    setAuth(event.target.checked)
-  }
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget)
@@ -44,63 +37,55 @@ export default function MenuAppBar() {
     setAnchorEl(null)
   }
 
-  function handleNameChange(val) {
-    getName(val)
-  }
-
   return (
     <div className={classes.root}>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label="LoginSwitch"
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup>
       <AppBar position="static">
         <Toolbar>
-          <TemporaryDrawer setName={handleNameChange} />
+          <TemporaryDrawer />
           <Typography variant="h6" className={classes.title}>
-            {name}
+            {props.selectedUser.name}
           </Typography>
-          {auth && (
-            <div>
-              <IconButton
-                aria-label="Account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                open={open}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-              </Menu>
-            </div>
-          )}
+          <div>
+            <IconButton
+              aria-label="Account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Profile</MenuItem>
+              <MenuItem onClick={handleClose}>
+                {props.selectedUser.name} account
+              </MenuItem>
+            </Menu>
+          </div>
         </Toolbar>
       </AppBar>
     </div>
   )
 }
+
+const mapState = state => {
+  return {
+    selectedUser: state.selectedUser
+  }
+}
+
+export default connect(mapState)(DisconnectedMenuAppBar)
